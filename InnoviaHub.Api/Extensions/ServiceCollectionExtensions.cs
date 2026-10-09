@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IResourceTypeService, ResourceTypeService>();
         services.AddScoped<IResourceService, ResourceService>();
         services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<IAvailabilityContextService, AvailabilityContextService>();
         
         return services;
     }

@@ -5,6 +5,7 @@ import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import BottomNav, { type View } from "./components/BottomNav";
 import ChangePasswordModal from "./components/ChangePasswordModal";
+import ChatBubble from "./components/ChatBubble";
 import { getCurrentUser, logout, type LoginResponse } from "./services/authService";
 
 export default function App() {
@@ -72,6 +73,7 @@ export default function App() {
                 }}
               />
             )}
+            {user && <ChatBubble />}
             {user?.mustChangePassword && <ChangePasswordModal onChanged={handlePasswordChanged} onLogout={handleLogout} />}
       </div>
   );

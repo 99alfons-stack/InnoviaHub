@@ -8,12 +8,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using InnoviaHub.Api.Hubs;
 using Scalar.AspNetCore;
+using System.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var frontendUrl = builder.Configuration["FRONTEND_URL"]
     ?? "http://localhost:5173";
 
+var openAiApiKey = builder.Configuration["OPENAI_API_KEY"]
+    ?? throw new InvalidOperationException("OPENAI_API_KEY IS MISSING");
+
+builder.Services.AddHttpClient("openai", client =>
+{
+    client.BaseAddress = new Uri("https://api.openai.com/v1/");
+    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openAiApiKey);
+    client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+});
 builder.Services.AddCors(options =>
 {
    options.AddPolicy("Frontend",policy =>

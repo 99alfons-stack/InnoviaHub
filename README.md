@@ -40,6 +40,12 @@ $env:ADMIN_EMAIL = ""
 $env:ADMIN_PASSWORD = ''
 ```
 
+Chatten kräver en OpenAI-nyckel. Spara den med user-secrets (lagras utanför repot och följer aldrig med till GitHub):
+
+```powershell
+dotnet user-secrets set OPENAI_API_KEY "<din_nyckel>" --project InnoviaHub.Api
+```
+
 > **Krav på `ADMIN_PASSWORD`**
 >
 > Lösenordet måste innehålla:
