@@ -13,6 +13,7 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IResourceService, ResourceService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IAvailabilityContextService, AvailabilityContextService>();
+        services.AddScoped<ISensorService, SensorService>();
         
         return services;
     }
