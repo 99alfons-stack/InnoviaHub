@@ -3,6 +3,8 @@ export default function AdminStatusBadge({ status }: { status: string }) {
     ok: { bg: "rgba(0,212,170,0.1)", color: "#00d4aa", label: "OK" },
     warn: { bg: "rgba(245,158,11,0.1)", color: "#f59e0b", label: "Varning" },
     alert: { bg: "rgba(244,63,94,0.1)", color: "#f43f5e", label: "Larm" },
+    waiting: { bg: "rgba(122,148,170,0.1)", color: "#7a94aa", label: "Väntar" },
+    offline: { bg: "rgba(244,63,94,0.1)", color: "#f43f5e", label: "Ingen data" },
     active: { bg: "rgba(0,212,170,0.1)", color: "#00d4aa", label: "Aktiv" },
     inactive: {
       bg: "rgba(122,148,170,0.1)",

@@ -24,6 +24,12 @@ builder.Services.AddHttpClient("openai", client =>
     client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", openAiApiKey);
     client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
 });
+// Innovia IoT DeviceRegistry.Api – source of the sensor list on the admin page
+builder.Services.AddHttpClient("deviceRegistry", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["Iot:DeviceRegistryUrl"] ?? "http://localhost:5101/");
+    client.Timeout = TimeSpan.FromSeconds(5);
+});
 builder.Services.AddCors(options =>
 {
    options.AddPolicy("Frontend",policy =>

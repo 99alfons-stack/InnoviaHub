@@ -87,6 +87,23 @@ npm run dev
 
 Klienten körs normalt på `http://localhost:5173`.
 
+### 4. Sensorer (Innovia IoT)
+
+Fliken **Sensorer** i adminvyn visar enheterna från Innovia IoT och deras senaste avläsning i realtid.
+
+- Enhetslistan hämtas av API:t från `DeviceRegistry.Api` (`GET /api/Sensors`, kräver admin).
+  Adress och tenant ställs in under `Iot` i `InnoviaHub.Api/appsettings.json`
+  (standard: `http://localhost:5101/` och tenant `innovia`).
+- Realtidsvärdena tas emot direkt i webbläsaren från `Realtime.Hub` via SignalR (`measurementReceived`).
+  Standardadressen är `http://localhost:5103/hub/telemetry` och kan ändras i klientens `.env`:
+
+```env
+VITE_REALTIME_HUB_URL=http://localhost:5103/hub/telemetry
+```
+
+Innovia IoT-tjänsterna (DeviceRegistry.Api, Realtime.Hub, Ingest.Gateway och Edge.Simulator) måste vara igång.
+Realtime.Hub måste tillåta `http://localhost:5173` i sin CORS-policy. En sensor som inte har rapporterat på 15 sekunder visas som **Ingen data**.
+
 ## Vanliga kommandon
 
 ```powershell

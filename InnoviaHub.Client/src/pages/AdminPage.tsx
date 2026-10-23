@@ -6,7 +6,8 @@ import AdminNavigation from "../components/AdminNavigation";
 import AdminSensors from "../components/AdminSensors";
 import MembersAdmin from "../components/MembersAdmin";
 import ResourcesAdmin from "../components/ResourcesAdmin";
-import { sensors, type AdminTab } from "../components/adminData";
+import { type AdminTab } from "../components/adminData";
+import { useSensorTelemetry } from "../hooks/useSensorTelemetry";
 import { deleteBooking, getAllBookings, type Booking } from "../services/bookingApiService";
 import { getAllResources, type Resource } from "../services/resourceService";
 
@@ -16,7 +17,9 @@ export default function AdminPage({ onBack, user }: { onBack: () => void; user: 
   const [bookingError, setBookingError] = useState<string | null>(null);
   const [bookingToDelete, setBookingToDelete] = useState<string | null>(null);
   const [resources, setResources] = useState<Resource[]>([]);
-  const alertCount = sensors.filter((sensor) => sensor.status !== "ok").length;
+  // Kept on the page (not the tab) so the Realtime.Hub connection survives tab switches
+  const telemetry = useSensorTelemetry();
+  const alertCount = telemetry.offlineCount;
 
   useEffect(() => {
     async function loadBookings() {
@@ -97,7 +100,7 @@ export default function AdminPage({ onBack, user }: { onBack: () => void; user: 
               occupancyPercentage={occupancyPercentage}
             />
           )}
-          {tab === "sensors" && <AdminSensors />}
+          {tab === "sensors" && <AdminSensors telemetry={telemetry} />}
           {tab === "resources" && <ResourcesAdmin />}
           {tab === "members" && <MembersAdmin />}
         </main>

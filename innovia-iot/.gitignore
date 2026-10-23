@@ -1,0 +1,89 @@
+# ---- .NET / Visual Studio ----
+bin/
+obj/
+out/
+*.exe
+*.dll
+*.pdb
+*.cache
+*.log
+*.user
+*.userosscache
+*.suo
+*.sln.docstates
+*.swp
+
+# Rider / VS Code
+.idea/
+.vscode/
+*.code-workspace
+# Paket / Restore
+*.nupkg
+*.snupkg
+*.nuspec
+packages/
+*.vspscc
+project.lock.json
+project.fragment.lock.json
+# Test resultater
+TestResult*/
+[Ll]og/
+*.trx
+*.coverage
+*.coveragexml
+# Entity Framework
+Migrations/
+# Docker / Container
+*.pid
+*.seed
+.env
+docker-compose.override.yml
+/deploy/mosquitto/data/
+/deploy/mosquitto/log/
+# OS / temp
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.tmp
+*.bak
+*.DS_Store
+# Node (om ni kör frontend i portalen)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+# JetBrains Rider
+*.iml
+# Publish / dist
+publish/
+dist/
+wwwroot/lib/
+# Coverage
+coverage/
+.coverage
+.coverage.*
+*.lcov
+# Resharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+# Sonar
+.sonar/
+.scannerwork/
+# Local secrets
+secrets.json
+appsettings.Development.json# --- Build artefacts ---
+# --- Logs / coverage ---
+# --- Packages / restore ---
+# --- User / IDE ---
+# --- OS ---
+.DS_Store
+# --- Docker/local ---
+deploy/mosquitto/data/
+deploy/mosquitto/log/
+# --- Node (om ni har frontend) ---
+# --- EF migrations (ta bort raden om ni vill versionera dem) ---
+# Migrations/
+# Cleanup
+cleanup.sh
