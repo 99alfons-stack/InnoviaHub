@@ -1,7 +1,7 @@
 # Implementation – Innovia IoT i InnoviaHub
 
-Det här dokumentet beskriver hur vi har kopplat ihop InnoviaHub med Innovia IoT, vilka ändringar vi har gjort
-i båda projekten och hur vi uppfyller kraven för G.
+Det här dokumentet beskriver hur jag har kopplat ihop InnoviaHub med Innovia IoT, vilka ändringar jag har gjort
+i båda projekten och hur jag uppfyller kraven för G.
 
 ## Översikt
 
@@ -13,8 +13,8 @@ Edge.Simulator ──MQTT──▶ Mosquitto ──▶ Ingest.Gateway ──▶ 
 DeviceRegistry.Api ◀──HTTP── InnoviaHub.Api (GET /api/Sensors) ◀──HTTP──────────────────┘
 ```
 
-- **Enhetslistan** hämtas av vårt API (`InnoviaHub.Api`) från `DeviceRegistry.Api` och skickas vidare till klienten.
-  Anropet går via vårt API så att bara inloggade administratörer kommer åt det och så att adressen till
+- **Enhetslistan** hämtas av mitt API (`InnoviaHub.Api`) från `DeviceRegistry.Api` och skickas vidare till klienten.
+  Anropet går via mitt API så att bara inloggade administratörer kommer åt det och så att adressen till
   DeviceRegistry bara finns i serverns konfiguration.
 - **Realtidsvärdena** tar klienten emot direkt från `Realtime.Hub` via SignalR (händelsen `measurementReceived`).
 
@@ -53,15 +53,15 @@ Allt visas under fliken **Sensorer** i adminvyn.
 | `src/Ingest.Gateway/Program.cs` | **Buggfix:** cachen för enhetsuppslag nycklades bara på tenant, så alla enheter fick den första enhetens id. Nu nycklas den på tenant + serienummer. **Buggfix:** tidsstämplar med annan tidszon än UTC (t.ex. svensk tid) kraschade sparningen – de görs nu om till UTC. |
 | `src/Realtime.Hub/Program.cs` | CORS tillåter `http://localhost:5173` (InnoviaHub-klienten). |
 | `scripts/seed-devices.ps1` | Nytt skript som registrerar tenanten `innovia` och de 10 enheterna i DeviceRegistry. Kan köras flera gånger. |
-| `BUGS.md` | Lista över buggar vi hittade i Innovia IoT och vilka vi har fixat. |
+| `BUGS.md` | Lista över buggar jag hittade i Innovia IoT och vilka jag har fixat. |
 
-## Så uppfyller vi kraven
+## Så uppfyller jag kraven
 
 | Krav | Lösning |
 |---|---|
 | Minst 10 registrerade enheter i DeviceRegistry | `scripts/seed-devices.ps1` registrerar tenanten `innovia` och 10 enheter: 4 med temperatur + CO₂, 3 med CO₂ och 3 med temperatur. |
 | Alla enheter tar emot mock-data via Edge.Simulator | Simulatorn skickar data för alla 10 enheter var 5:e sekund. Buggfixarna i Ingest.Gateway gör att datan faktiskt sparas på rätt enhet. |
-| Enheterna hämtas via DeviceRegistry API och visas i vår portal | `SensorService` anropar `GET /api/tenants/by-slug/{slug}` och `GET /api/tenants/{id}/devices`. Fliken *Sensorer* visar listan. |
+| Enheterna hämtas via DeviceRegistry API och visas i min portal | `SensorService` anropar `GET /api/tenants/by-slug/{slug}` och `GET /api/tenants/{id}/devices`. Fliken *Sensorer* visar listan. |
 | Realtidsdata visas med SignalR + Realtime.Hub | `useSensorTelemetry` lyssnar på `measurementReceived` och uppdaterar korten direkt när ett nytt värde kommer in. |
 
 ## Köra allt
