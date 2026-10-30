@@ -13,6 +13,9 @@ export type TelemetryConnectionState = "connecting" | "connected" | "reconnectin
 // A device that has not reported for this long is shown as offline
 export const STALE_AFTER_MS = 15_000;
 
+// Shown when DeviceRegistry or Realtime.Hub can't be reached (e.g. Innovia IoT is not deployed)
+const CONNECTION_MISSING = "Anslutning saknas";
+
 export function useSensorTelemetry() {
   const [devices, setDevices] = useState<SensorDevice[]>([]);
   const [readings, setReadings] = useState<Record<string, DeviceReadings>>({});
@@ -43,7 +46,9 @@ export function useSensorTelemetry() {
       setConnectionState("connected");
     });
     connection.onclose(() => {
-      if (!cancelled) setConnectionState("disconnected");
+      if (cancelled) return;
+      setError(CONNECTION_MISSING);
+      setConnectionState("disconnected");
     });
 
     async function start() {
@@ -56,10 +61,10 @@ export function useSensorTelemetry() {
         await connection.start();
         await connection.invoke("JoinTenant", tenantSlug);
         if (!cancelled) setConnectionState("connected");
-      } catch (err) {
+      } catch {
         // Ignore errors caused by our own cleanup (e.g. React StrictMode unmounting during start)
         if (cancelled) return;
-        setError(err instanceof Error ? err.message : "Kunde inte ansluta till sensorerna");
+        setError(CONNECTION_MISSING);
         setConnectionState("disconnected");
       }
     }

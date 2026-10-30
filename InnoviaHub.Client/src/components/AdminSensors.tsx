@@ -5,7 +5,7 @@ const connectionLabels: Record<TelemetryConnectionState, { label: string; color:
   connecting: { label: "Ansluter till Realtime.Hub…", color: "#7a94aa" },
   connected: { label: "Realtid · ansluten", color: "#00d4aa" },
   reconnecting: { label: "Återansluter…", color: "#f59e0b" },
-  disconnected: { label: "Frånkopplad", color: "#f43f5e" },
+  disconnected: { label: "Anslutning saknas", color: "#f43f5e" },
 };
 
 const metricFormats: Record<string, { label: string; icon: string; format: (value: number) => string }> = {
