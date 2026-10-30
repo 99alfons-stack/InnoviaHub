@@ -24,7 +24,7 @@ InnoviaHub.Api/         Controllers, services, SignalR-hub, seeding av roller oc
 InnoviaHub.DataAccess/  DbContext, entiteter, repositories och migrationer
 InnoviaHub.Shared/      DTO:er och enums
 InnoviaHub.Client/      React-klienten
-innovia-iot/            Innovia IoT-plattformen (med våra ändringar)
+innovia-iot/            Innovia IoT-plattformen (med mina ändringar)
 compose.yaml            PostgreSQL för Innovia Hub
 ```
 
@@ -144,7 +144,7 @@ HTTP-anrop för att testa API:t finns i `InnoviaHub.Api/Http` och kan köras med
 
 ## Vidareutvecklade funktioner
 
-De här funktionerna har vi lagt till utöver grundprojektet:
+De här funktionerna har jag lagt till utöver grundprojektet:
 
 ### AI-chatt för tillgänglighet
 - En chattbubbla (`ChatBubble.tsx`) som visas för alla inloggade användare.
