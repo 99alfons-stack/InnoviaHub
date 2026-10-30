@@ -1,7 +1,13 @@
-# Implementation – Innovia IoT i InnoviaHub
+# Implementation – Innovia IoT och AI-chatt i InnoviaHub
 
-Det här dokumentet beskriver hur jag har kopplat ihop InnoviaHub med Innovia IoT, vilka ändringar jag har gjort
-i båda projekten och hur jag uppfyller kraven för G.
+Det här dokumentet beskriver de två funktioner jag har lagt till i InnoviaHub:
+
+1. **Innovia IoT** – hur jag har kopplat ihop InnoviaHub med Innovia IoT, vilka ändringar jag har gjort
+   i båda projekten och hur jag uppfyller kraven för G.
+2. **AI-chatt** – en chatt där användaren kan fråga vad som är ledigt och få svar från OpenAI
+   baserat på resurserna och bokningarna i databasen.
+
+# Del 1: Innovia IoT
 
 ## Översikt
 
@@ -85,3 +91,62 @@ Allt visas under fliken **Sensorer** i adminvyn.
   Kör `seed-devices.ps1` igen efteråt.
 - Realtime.Hub har ingen inloggning: vem som helst som når hubben kan lyssna på tenantens data. Det och övriga
   kända brister i Innovia IoT finns beskrivna i `BUGS.md` i det projektet.
+
+# Del 2: AI-chatt
+
+## Översikt
+
+```
+ChatBubble (klient) ──POST /api/Chat──▶ ChatController ──▶ AvailabilityContextService ──▶ PostgreSQL
+                                              │               (resurser + bokningar)
+                                              └──POST /v1/responses──▶ OpenAI (gpt-4o-mini)
+```
+
+- Alla inloggade användare ser en chattbubbla nere i hörnet och kan ställa frågor, till exempel
+  *"Är något mötesrum ledigt på fredag eftermiddag?"*.
+- Mitt API bygger en textsammanfattning av alla aktiva resurser och bokningarna för de kommande 14 dagarna
+  och skickar den till OpenAI tillsammans med frågan. På så sätt svarar chatten utifrån riktig data.
+- Anropet till OpenAI går via mitt API, så API-nyckeln finns bara på servern och aldrig i klienten.
+
+## Ändringar i InnoviaHub
+
+### API (`InnoviaHub.Api`)
+| Fil | Ändring |
+|---|---|
+| `Controllers/ChatController.cs` | Ny endpoint `POST /api/Chat` (kräver inloggning). Tar emot `{ question }`, skickar frågan till OpenAI Responses API och returnerar `{ answer }`. Svarar 400 vid tom fråga och 502 om OpenAI inte svarar. |
+| `Services/AvailabilityContextService.cs`, `Services/Interfaces/IAvailabilityContextService.cs` | Bygger sammanfattningen: aktuell tid, varje aktiv resurs (typ, zon, kapacitet) och dess bokade tider. Tiderna görs om från UTC till svensk tid. |
+| `Program.cs` | Läser `OPENAI_API_KEY` och skapar en namngiven `HttpClient` (`openai`) med nyckeln som Bearer-token. API:t startar inte om nyckeln saknas. |
+| `Extensions/ServiceCollectionExtensions.cs` | Registrerar `IAvailabilityContextService`. |
+| `InnoviaHub.Api.csproj` | `UserSecretsId` så att nyckeln kan sparas med `dotnet user-secrets`. |
+
+### DataAccess (`InnoviaHub.DataAccess`)
+- `BookingRepository.GetActiveInRangeAsync` – hämtar bokningar som inte är avbokade och som överlappar ett tidsintervall.
+
+### Klient (`InnoviaHub.Client`)
+| Fil | Ändring |
+|---|---|
+| `components/ChatBubble.tsx` | Chattfönster som öppnas från en bubbla. Visar konversationen, skickar frågan till `/api/Chat` och visar svaret eller ett felmeddelande. |
+| `App.tsx` | Visar `ChatBubble` när användaren är inloggad. |
+
+## Instruktioner till modellen
+
+Chatten får instruktioner om att:
+- svara kort och vänligt på svenska,
+- bara använda tillgänglighetsdatan när den svarar om lediga eller bokade tider, och inte hitta på resurser eller tider,
+- säga att den bara ser de kommande två veckorna om frågan gäller en senare tid,
+- hänvisa till bokningssidan, eftersom den inte kan boka själv.
+
+## Köra chatten
+
+1. Spara OpenAI-nyckeln med user-secrets:
+   ```powershell
+   dotnet user-secrets set OPENAI_API_KEY "<din_nyckel>" --project InnoviaHub.Api
+   ```
+2. Starta API och klient enligt [README.md](README.md).
+3. Logga in och klicka på chattbubblan.
+
+## Kända begränsningar
+
+- Varje fråga skickas för sig, så chatten minns inte tidigare frågor i samma konversation.
+- Chatten ser bara de kommande 14 dagarna.
+- Hela tillgänglighetsdatan skickas med varje fråga. Med många resurser och bokningar blir anropen större och dyrare.
